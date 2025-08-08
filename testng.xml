@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="FobeSoftSuite" verbose="1" parallel="false">
+  <test name="LoginPageTests">
+    <classes>
+      <class name="com.fobesoft.tests.FobeSoftLoginTest"/>
+    </classes>
+  </test>
+</suite>
