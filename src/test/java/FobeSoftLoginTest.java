@@ -104,7 +104,7 @@ public class FobeSoftLoginTest {
         // Wait for overlays/modals to disappear if necessary
         try {
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
-        } catch (Exception ignored) {}
+        } catch (TimeoutException ignored) {}
         ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", rememberMe);
         wait.until(ExpectedConditions.elementToBeClickable(rememberMe));
         rememberMe.click();
