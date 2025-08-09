@@ -1,4 +1,4 @@
-<<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -7,13 +7,14 @@
   <groupId>com.fobesoft</groupId>
   <artifactId>fobesoft-login-tests</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <testng.version>7.10.2</testng.version>
     <selenium.version>4.21.0</selenium.version>
+    <testng.version>7.10.2</testng.version>
     <surefire.version>3.2.5</surefire.version>
   </properties>
 
@@ -39,11 +40,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <!-- Use your TestNG suite file -->
           <suiteXmlFiles>
             <suiteXmlFile>testng.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <!-- Show full stack traces if a test fails -->
           <printSummary>true</printSummary>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
