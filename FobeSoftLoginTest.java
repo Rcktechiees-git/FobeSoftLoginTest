@@ -17,7 +17,7 @@ public class FobeSoftLoginTest {
     @Before
     public void setUp() {
         // Uncomment and set path if chromedriver is not in PATH
-        // System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
         driver = new ChromeDriver();
         driver.get("https://dev.fobesoft.com/#/login");
         wait = new WebDriverWait(driver, 10);
