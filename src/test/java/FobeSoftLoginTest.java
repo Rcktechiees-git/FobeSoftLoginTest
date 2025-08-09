@@ -1,5 +1,3 @@
-// No package declaration (default package)
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
@@ -50,7 +48,7 @@ public class FobeSoftLoginTest {
 
     @Test
     public void loginElementsPresent() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
         Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
@@ -65,9 +63,9 @@ public class FobeSoftLoginTest {
         WebElement password = driver.findElement(By.xpath("//input[@id='Password1']"));
         WebElement loginBtn = driver.findElement(By.xpath("//button[@id='login_btn']"));
         username.clear();
-        username.sendKeys("invalid_user");
+        username.sendKeys("test@gmail.com");
         password.clear();
-        password.sendKeys("wrong_password");
+        password.sendKeys("test123");
         loginBtn.click();
 
         WebElement errorMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -85,7 +83,7 @@ public class FobeSoftLoginTest {
         wait.until(ExpectedConditions.urlContains("forgot"));
         Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
         driver.navigate().back();
-         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
     }
 
     @Test
@@ -96,7 +94,7 @@ public class FobeSoftLoginTest {
         wait.until(ExpectedConditions.urlContains("signup"));
         Assert.assertTrue(driver.getCurrentUrl().contains("signup"));
         driver.navigate().back();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
     }
 
     @Test
