@@ -21,11 +21,6 @@
  <dependencies>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>${selenium.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-devtools-v138</artifactId>
       <version>${selenium.version}</version>
     </dependency>
