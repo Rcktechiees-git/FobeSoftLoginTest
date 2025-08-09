@@ -20,9 +20,9 @@
 
  <dependencies>
     <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-devtools-v138</artifactId>
-      <version>${selenium.version}</version>
+           <groupId>org.seleniumhq.selenium</groupId>
+           <artifactId>selenium-devtools-v124</artifactId>
+           <version>4.21.0</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
