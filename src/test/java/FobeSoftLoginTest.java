@@ -49,7 +49,8 @@ public class FobeSoftLoginTest {
 
     @Test
     public void loginElementsPresent() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath("//span[@class='activeTab' and translate(text(), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')='LOGIN']")));
         Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
@@ -84,7 +85,8 @@ public class FobeSoftLoginTest {
         wait.until(ExpectedConditions.urlContains("forgot"));
         Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
         driver.navigate().back();
-         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+         wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath("//span[@class='activeTab' and translate(text(), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')='LOGIN']")));
     }
 
     @Test
@@ -95,7 +97,8 @@ public class FobeSoftLoginTest {
         wait.until(ExpectedConditions.urlContains("signup"));
         Assert.assertTrue(driver.getCurrentUrl().contains("signup"));
         driver.navigate().back();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath("//span[@class='activeTab' and translate(text(), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')='LOGIN']")));
     }
 
     @Test
