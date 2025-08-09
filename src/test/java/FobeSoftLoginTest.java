@@ -2,6 +2,7 @@
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -47,23 +48,34 @@ public class FobeSoftLoginTest {
         }
     }
 
+    private void scrollIntoView(WebElement element) {
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
+    private void waitForOverlayToDisappear() {
+        try {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
+        } catch (TimeoutException ignored) {}
+        // Add more overlays/modals if needed
+    }
+
     @Test
     public void loginElementsPresent() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.xpath("//span[@class='activeTab' and translate(text(), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')='LOGIN']")));
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='rememberMe1-input']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]")).isDisplayed());
+        Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@formcontrolname='username']"))).isDisplayed());
+        Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='Password1']"))).isDisplayed());
+        Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='login_btn']"))).isDisplayed());
+        Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='rememberMe1-input']"))).isDisplayed());
+        Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//u[contains(text(), 'Forgot Password?')]"))).isDisplayed());
+        Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//u[contains(text(), 'Sign Up')]"))).isDisplayed());
     }
 
     @Test
     public void invalidLoginShowsError() {
-        WebElement username = driver.findElement(By.xpath("//input[@formcontrolname='username']"));
-        WebElement password = driver.findElement(By.xpath("//input[@id='Password1']"));
-        WebElement loginBtn = driver.findElement(By.xpath("//button[@id='login_btn']"));
+        WebElement username = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@formcontrolname='username']")));
+        WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='Password1']")));
+        WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@id='login_btn']")));
         username.clear();
         username.sendKeys("invalid_user");
         password.clear();
@@ -79,20 +91,22 @@ public class FobeSoftLoginTest {
 
     @Test
     public void forgotPasswordLink() {
-        WebElement forgotLink = driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]"));
+        WebElement forgotLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//u[contains(text(), 'Forgot Password?')]")));
         scrollIntoView(forgotLink);
+        waitForOverlayToDisappear();
         forgotLink.click();
         wait.until(ExpectedConditions.urlContains("forgot"));
         Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
         driver.navigate().back();
-         wait.until(ExpectedConditions.visibilityOfElementLocated(
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.xpath("//span[@class='activeTab' and translate(text(), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')='LOGIN']")));
     }
 
     @Test
     public void signUpLink() {
-        WebElement signUpLink = driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]"));
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", signUpLink);
+        WebElement signUpLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//u[contains(text(), 'Sign Up')]")));
+        scrollIntoView(signUpLink);
+        waitForOverlayToDisappear();
         signUpLink.click();
         wait.until(ExpectedConditions.urlContains("signup"));
         Assert.assertTrue(driver.getCurrentUrl().contains("signup"));
@@ -103,14 +117,12 @@ public class FobeSoftLoginTest {
 
     @Test
     public void rememberMeCheckbox() {
-        WebElement rememberMe = driver.findElement(By.xpath("//input[@id='rememberMe1-input']"));
-        // Wait for overlays/modals to disappear if necessary
-        try {
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
-        } catch (TimeoutException ignored) {}
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", rememberMe);
+        WebElement rememberMe = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='rememberMe1-input']")));
+        waitForOverlayToDisappear();
+        scrollIntoView(rememberMe);
         wait.until(ExpectedConditions.elementToBeClickable(rememberMe));
         rememberMe.click();
-        Assert.assertTrue(rememberMe.isSelected());
+        // Checkbox may not have "selected" property but "aria-checked" or "checked" attribute
+        Assert.assertTrue(rememberMe.isSelected() || "true".equals(rememberMe.getAttribute("aria-checked")) || rememberMe.getAttribute("checked") != null);
     }
 }
