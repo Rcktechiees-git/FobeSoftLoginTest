@@ -49,8 +49,8 @@ public class FobeSoftLoginTest {
     @Test
     public void loginElementsPresent() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='EMail1' and @type='email']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@type='password']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//input[@id='rememberMe1-input']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]")).isDisplayed());
@@ -59,8 +59,8 @@ public class FobeSoftLoginTest {
 
     @Test
     public void invalidLoginShowsError() {
-        WebElement username = driver.findElement(By.xpath("//input[@formcontrolname='username']"));
-        WebElement password = driver.findElement(By.xpath("//input[@id='Password1']"));
+        WebElement username = driver.findElement(By.xpath("//input[@id='EMail1' and @type='email']"));
+        WebElement password = driver.findElement(By.xpath("//input[@type='password']"));
         WebElement loginBtn = driver.findElement(By.xpath("//button[@id='login_btn']"));
         username.clear();
         username.sendKeys("test@gmail.com");
