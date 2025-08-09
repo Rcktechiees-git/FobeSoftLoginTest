@@ -1,6 +1,7 @@
 // No package declaration (default package)
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,7 +22,7 @@ public class FobeSoftLoginTest {
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
 
-        // Headless mode in CI (GitHub Actions sets CI env variable)
+        // Headless mode in CI environments
         boolean headless = System.getenv("CI") != null
                 || Boolean.getBoolean("headless");
 
@@ -34,10 +35,8 @@ public class FobeSoftLoginTest {
             );
         }
 
-        // Do NOT set webdriver.chrome.driver manually; Selenium Manager handles it.
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         driver.get("https://dev.fobesoft.com/#/login");
     }
 
@@ -80,16 +79,18 @@ public class FobeSoftLoginTest {
     @Test
     public void forgotPasswordLink() {
         WebElement forgotLink = driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]"));
+        scrollIntoView(forgotLink);
         forgotLink.click();
         wait.until(ExpectedConditions.urlContains("forgot"));
         Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
         driver.navigate().back();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
     }
 
     @Test
     public void signUpLink() {
         WebElement signUpLink = driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]"));
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", signUpLink);
         signUpLink.click();
         wait.until(ExpectedConditions.urlContains("signup"));
         Assert.assertTrue(driver.getCurrentUrl().contains("signup"));
@@ -100,6 +101,12 @@ public class FobeSoftLoginTest {
     @Test
     public void rememberMeCheckbox() {
         WebElement rememberMe = driver.findElement(By.xpath("//input[@id='rememberMe1-input']"));
+        // Wait for overlays/modals to disappear if necessary
+        try {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
+        } catch (TimeoutException ignored) {}
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", rememberMe);
+        wait.until(ExpectedConditions.elementToBeClickable(rememberMe));
         rememberMe.click();
         Assert.assertTrue(rememberMe.isSelected());
     }
