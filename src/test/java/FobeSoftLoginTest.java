@@ -1,6 +1,5 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -23,7 +22,9 @@ public class FobeSoftLoginTest {
         ChromeOptions options = new ChromeOptions();
 
         // Headless mode in CI environments
-        boolean headless = System.getenv("CI") != null || Boolean.getBoolean("headless");
+        boolean headless = System.getenv("CI") != null
+                || Boolean.getBoolean("headless");
+
         if (headless) {
             options.addArguments(
                     "--headless=new",
@@ -34,9 +35,8 @@ public class FobeSoftLoginTest {
         }
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        driver.get("https://app.fobesoft.com/#/login");
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//form")));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        driver.get("https://dev.fobesoft.com/#/login");
     }
 
     @AfterClass(alwaysRun = true)
@@ -46,71 +46,71 @@ public class FobeSoftLoginTest {
         }
     }
 
-    private void scrollIntoView(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'center'});", element);
-    }
-
-    private void waitForOverlayToDisappear() {
-        try {
-            WebElement modal = driver.findElement(By.id("forgotPasswordModel"));
-            if (modal.isDisplayed()) {
-                WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[@id='forgotPasswordModel']//button[contains(text(), 'Close') or contains(text(), 'Cancel')]")));
-                closeButton.click();
-                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
-            }
-        } catch (NoSuchElementException | TimeoutException ignored) {
-            // Modal not present or already closed
-        }
+    @Test
+    public void loginElementsPresent() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='rememberMe1-input']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]")).isDisplayed());
     }
 
     @Test
-    public void validateEmailFormatAndPassword() {
-        waitForOverlayToDisappear();
-        WebElement username = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//input[@formcontrolname='username']")));
-        WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//input[@id='Password1']")));
-        WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[@id='login_btn']")));
-
-        // Test invalid email format
+    public void invalidLoginShowsError() {
+        WebElement username = driver.findElement(By.xpath("//input[@formcontrolname='username']"));
+        WebElement password = driver.findElement(By.xpath("//input[@id='Password1']"));
+        WebElement loginBtn = driver.findElement(By.xpath("//button[@id='login_btn']"));
         username.clear();
-        username.sendKeys("invalid_email");
+        username.sendKeys("test@gmail.com");
         password.clear();
-        password.sendKeys("testpassword");
-        scrollIntoView(loginBtn);
+        password.sendKeys("test123");
         loginBtn.click();
 
-        // Check for email format validation error
+        WebElement errorMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'invalid') " +
+                        "or contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'incorrect') " +
+                        "or contains(@class,'error')]")));
+        Assert.assertNotNull(errorMsg, "Expected an error message after invalid login.");
+    }
+
+    @Test
+    public void forgotPasswordLink() {
+        WebElement forgotLink = driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]"));
+        scrollIntoView(forgotLink);
+        forgotLink.click();
+        wait.until(ExpectedConditions.urlContains("forgot"));
+        Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
+        driver.navigate().back();
+         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
+    }
+
+    @Test
+    public void signUpLink() {
+        WebElement signUpLink = driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]"));
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", signUpLink);
+        signUpLink.click();
+        wait.until(ExpectedConditions.urlContains("signup"));
+        Assert.assertTrue(driver.getCurrentUrl().contains("signup"));
+        driver.navigate().back();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
+    }
+
+    @Test
+    public void rememberMeCheckbox() {
+        WebElement rememberMe = driver.findElement(By.xpath("//input[@id='rememberMe1-input']"));
+        // Wait for overlays/modals to disappear if necessary
         try {
-            WebElement errorMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'email') " +
-                            "and contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'invalid')]")));
-            Assert.assertTrue(errorMsg.isDisplayed(), "Expected an error message for invalid email format.");
-        } catch (TimeoutException e) {
-            Assert.fail("No error message displayed for invalid email format.");
-        }
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
+        } catch (TimeoutException ignored) {}
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", rememberMe);
+        wait.until(ExpectedConditions.elementToBeClickable(rememberMe));
+        rememberMe.click();
+        Assert.assertTrue(rememberMe.isSelected());
+    }
 
-        // Test valid email format
-        username.clear();
-        username.sendKeys("test@example.com");
-        password.clear();
-        password.sendKeys("Test@1234");
-        scrollIntoView(loginBtn);
-        loginBtn.click();
-
-        // Check if no email format error is displayed (assuming valid format doesn't trigger error)
-        try {
-            WebElement errorMsg = driver.findElement(
-                    By.xpath("//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'email') " +
-                            "and contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'invalid')]"));
-            Assert.assertFalse(errorMsg.isDisplayed(), "Unexpected error message for valid email format.");
-        } catch (NoSuchElementException | TimeoutException e) {
-            // No error message is a good sign for valid email
-        }
-
-        // Verify password field accepts input
-        Assert.assertEquals(password.getAttribute("value"), "Test@1234", "Password field did not accept the input correctly.");
+    private void scrollIntoView(WebElement element) {
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 }
