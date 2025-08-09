@@ -79,7 +79,7 @@ public class FobeSoftLoginTest {
     @Test
     public void forgotPasswordLink() {
         WebElement forgotLink = driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]"));
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", forgotLink);
+        scrollIntoView(forgotLink);
         forgotLink.click();
         wait.until(ExpectedConditions.urlContains("forgot"));
         Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
