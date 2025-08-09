@@ -2,7 +2,7 @@
 <suite name="FobeSoftSuite" verbose="1" parallel="false">
   <test name="LoginPageTests">
     <classes>
-      <class name="com.fobesoft.tests.FobeSoftLoginTest"/>
+      <class name="FobeSoftLoginTest"/>
     </classes>
   </test>
 </suite>
