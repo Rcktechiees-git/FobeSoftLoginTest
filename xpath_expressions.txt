@@ -1,0 +1,27 @@
+XPath Expressions Found in FobeSoftLoginTest Repository
+===========================================================
+
+1. Login Page Header:
+   //h2[contains(text(), 'Log In')]
+
+2. Username Input Field:
+   //input[@formcontrolname='username']
+
+3. Password Input Field:
+   //input[@formcontrolname='password']
+
+4. Login Button:
+   //button[contains(text(), 'Log In')]
+
+5. Remember Me Checkbox:
+   //input[@type='checkbox']
+
+6. Error Message (Basic):
+   //*[contains(text(),'invalid') or contains(text(),'Incorrect') or contains(@class,'error')]
+
+7. Error Message (Enhanced with Case-Insensitive Matching):
+   //*[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'invalid') or contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'incorrect') or contains(@class,'error')]
+
+Total: 7 unique XPath expressions
+Files: FobeSoftLoginTest.java (root) and src/test/java/FobeSoftLoginTest.java
+Framework: Selenium WebDriver with TestNG
