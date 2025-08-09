@@ -50,7 +50,7 @@ public class FobeSoftLoginTest {
 
     @Test
     public void loginElementsPresent() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='activeTab' and text()='LOGIN']")));
         Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
