@@ -2,6 +2,7 @@
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -109,5 +110,9 @@ public class FobeSoftLoginTest {
         wait.until(ExpectedConditions.elementToBeClickable(rememberMe));
         rememberMe.click();
         Assert.assertTrue(rememberMe.isSelected());
+    }
+
+    private void scrollIntoView(WebElement element) {
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 }
