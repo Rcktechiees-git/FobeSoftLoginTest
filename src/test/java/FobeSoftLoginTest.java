@@ -52,18 +52,18 @@ public class FobeSoftLoginTest {
     public void loginElementsPresent() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Log In')]")));
         Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='username']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@formcontrolname='password']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//button[contains(text(), 'Log In')]")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//input[@type='checkbox']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.linkText("Forgot Password?")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.linkText("Sign Up")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='Password1']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//input[@id='rememberMe1-input']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]")).isDisplayed());
     }
 
     @Test
     public void invalidLoginShowsError() {
         WebElement username = driver.findElement(By.xpath("//input[@formcontrolname='username']"));
-        WebElement password = driver.findElement(By.xpath("//input[@formcontrolname='password']"));
-        WebElement loginBtn = driver.findElement(By.xpath("//button[contains(text(), 'Log In')]"));
+        WebElement password = driver.findElement(By.xpath("//input[@id='Password1']"));
+        WebElement loginBtn = driver.findElement(By.xpath("//button[@id='login_btn']"));
         username.clear();
         username.sendKeys("invalid_user");
         password.clear();
@@ -79,7 +79,7 @@ public class FobeSoftLoginTest {
 
     @Test
     public void forgotPasswordLink() {
-        WebElement forgotLink = driver.findElement(By.linkText("Forgot Password?"));
+        WebElement forgotLink = driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]"));
         forgotLink.click();
         wait.until(ExpectedConditions.urlContains("forgot"));
         Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
@@ -89,7 +89,7 @@ public class FobeSoftLoginTest {
 
     @Test
     public void signUpLink() {
-        WebElement signUpLink = driver.findElement(By.linkText("Sign Up"));
+        WebElement signUpLink = driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]"));
         signUpLink.click();
         wait.until(ExpectedConditions.urlContains("signup"));
         Assert.assertTrue(driver.getCurrentUrl().contains("signup"));
@@ -99,7 +99,7 @@ public class FobeSoftLoginTest {
 
     @Test
     public void rememberMeCheckbox() {
-        WebElement rememberMe = driver.findElement(By.xpath("//input[@type='checkbox']"));
+        WebElement rememberMe = driver.findElement(By.xpath("//input[@id='rememberMe1-input']"));
         rememberMe.click();
         Assert.assertTrue(rememberMe.isSelected());
     }
