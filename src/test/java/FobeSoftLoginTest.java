@@ -142,7 +142,7 @@ public class FobeSoftLoginTest {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@routerlink='/signup']")));
 
         // Find the "Sign Up" link
-        WebElement signUpLink = driver.findElement(By.xpath("//a[@routerlink='/signup']')]"));
+        WebElement signUpLink = driver.findElement(By.xpath("//a[@routerlink='/signup']"));
 
         // Scroll the link into view
         scrollIntoView(signUpLink);
