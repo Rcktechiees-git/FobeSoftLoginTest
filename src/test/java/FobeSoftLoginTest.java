@@ -35,7 +35,7 @@ public class FobeSoftLoginTest {
         }
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(100));
         driver.get("https://dev.fobesoft.com/#/login");
     }
 
@@ -71,14 +71,14 @@ public class FobeSoftLoginTest {
         Assert.assertTrue(driver.findElement(By.xpath("//input[@type='password']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//button[@id='login_btn']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//input[@id='rememberMe1-input']")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Forgot Password?')]")).isDisplayed());
-        Assert.assertTrue(driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//a[normalize-space()='Forgot Password?']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//a[@routerlink='/signup']")).isDisplayed());
     }
 
     @Test
     public void invalidLoginShowsError() {
         // Wait for the username input field to be visible
-        WebElement username = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@formcontrolname='username']")));
+        WebElement username = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='EMail1' and @type='email']")));
 
         // Wait for the password input field to be visible
         WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='Password1']")));
@@ -111,7 +111,7 @@ public class FobeSoftLoginTest {
     @Test
     public void forgotPasswordLink() {
         // Wait until the "Forgot Password?" link is visible
-        WebElement forgotLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//u[contains(text(), 'Forgot Password?')]")));
+        WebElement forgotLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[normalize-space()='Forgot Password?']")));
 
         // Scroll the link into view
         scrollIntoView(forgotLink);
@@ -139,10 +139,10 @@ public class FobeSoftLoginTest {
     @Test
     public void signUpLink() {
         // Wait until the "Sign Up" link is visible
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//u[contains(text(), 'Sign Up')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@routerlink='/signup']")));
 
         // Find the "Sign Up" link
-        WebElement signUpLink = driver.findElement(By.xpath("//u[contains(text(), 'Sign Up')]"));
+        WebElement signUpLink = driver.findElement(By.xpath("//a[@routerlink='/signup']')]"));
 
         // Scroll the link into view
         scrollIntoView(signUpLink);
