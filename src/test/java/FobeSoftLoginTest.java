@@ -110,16 +110,34 @@ public class FobeSoftLoginTest {
         Assert.assertNotNull(errorMsg, "Expected an error message after invalid login.");
     }
 
-    @Test
-    public void forgotPasswordLink() {
-        safeClick(By.xpath("//a[normalize-space()='Forgot Password?']"));
-        wait.until(ExpectedConditions.urlContains("forgot"));
-        Assert.assertTrue(driver.getCurrentUrl().contains("forgot"));
+   @Test
+public void forgotPasswordLink() {
+    System.out.println("Current URL before clicking: " + driver.getCurrentUrl());
 
-        driver.navigate().back();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
+    // Click the "Forgot Password?" link safely
+    safeClick(By.xpath("//a[normalize-space()='Forgot Password?']"));
+
+    // Wait for either URL change or presence of reset form
+    try {
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.urlContains("forgot"),
+                ExpectedConditions.presenceOfElementLocated(By.id("reset-password-form"))
+        ));
+    } catch (TimeoutException e) {
+        System.err.println("Timeout waiting for forgot password page. Current URL: " + driver.getCurrentUrl());
+        throw e;
     }
+
+    // Assert URL contains "forgot"
+    Assert.assertTrue(driver.getCurrentUrl().contains("forgot"),
+            "Expected URL to contain 'forgot' but was: " + driver.getCurrentUrl());
+
+    // Navigate back and verify login page is visible
+    driver.navigate().back();
+    wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
+}
+
 
     @Test
     public void signUpLink() {
