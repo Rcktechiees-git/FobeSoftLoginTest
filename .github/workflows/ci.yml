@@ -27,13 +27,24 @@ jobs:
       - name: Run tests (headless)
         run: mvn -B -Dheadless=true test
 
+      # Debugging: Show if the test class exists
       - name: List compiled test classes (debug)
         if: always()
         run: find target/test-classes -name "FobeSoftLoginTest.class" -print
 
-      - name: Archive surefire reports
+      # Upload raw Surefire reports as an artifact
+      - name: Archive Surefire reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
           path: target/surefire-reports
+
+      # Generate a pretty GitHub Actions test summary
+      - name: Publish Test Report
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: 'target/surefire-reports/TEST-*.xml'
+          include_passed: true
+          check_name: 'Java Test Results'
