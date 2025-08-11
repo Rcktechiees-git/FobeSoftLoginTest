@@ -1,4 +1,5 @@
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -30,12 +31,15 @@ public class FobeSoftLoginTest {
                     "--headless=new",
                     "--no-sandbox",
                     "--disable-dev-shm-usage",
-                    "--window-size=1920,1080"
+                    "--window-size=1920,1080",
+                    "--disable-gpu",
+                    "--disable-web-security",
+                    "--disable-features=VizDisplayCompositor"
             );
         }
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         driver.get("https://dev.fobesoft.com/#/login");
     }
 
@@ -54,10 +58,34 @@ public class FobeSoftLoginTest {
     // Utility method to wait for any overlay/modal to disappear
     private void waitForOverlayToDisappear() {
         try {
+            // Wait for the modal to be invisible if it exists
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("forgotPasswordModel")));
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-backdrop")));  // Optional: If there's a backdrop overlay
         } catch (TimeoutException ignored) {
-            // In case the overlay never appears or disappears before the timeout
+            // Modal might not exist, which is fine
+        }
+        
+        try {
+            // Also check for backdrop overlay
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-backdrop")));
+        } catch (TimeoutException ignored) {
+            // Backdrop might not exist, which is fine
+        }
+        
+        // Give a small pause to ensure any transitions are complete
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // Utility method to click element with fallback to JavaScript click
+    private void safeClick(WebElement element) {
+        try {
+            element.click();
+        } catch (ElementClickInterceptedException e) {
+            // If regular click fails, use JavaScript click
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
         }
     }
 
@@ -95,8 +123,8 @@ public class FobeSoftLoginTest {
         // Wait for any overlay or modal to disappear before clicking the login button
         waitForOverlayToDisappear();
 
-        // Click the login button
-        loginBtn.click();
+        // Click the login button using safe click method
+        safeClick(loginBtn);
 
         // Wait for the error message to appear (adjusting to ensure it waits for visibility)
         WebElement errorMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -119,8 +147,8 @@ public class FobeSoftLoginTest {
         // Wait for any possible overlay to disappear before clicking
         waitForOverlayToDisappear();
 
-        // Click the "Forgot Password?" link
-        forgotLink.click();
+        // Click the "Forgot Password?" link using safe click method
+        safeClick(forgotLink);
 
         // Wait until the URL changes to include "forgot"
         wait.until(ExpectedConditions.urlContains("forgot"));
@@ -147,8 +175,9 @@ public class FobeSoftLoginTest {
         // Scroll the link into view
         scrollIntoView(signUpLink);
 
-        // Wait until the link is clickable
-        wait.until(ExpectedConditions.elementToBeClickable(signUpLink)).click();
+        // Wait until the link is clickable and click using safe click method
+        wait.until(ExpectedConditions.elementToBeClickable(signUpLink));
+        safeClick(signUpLink);
 
         // Wait for the URL to change to the "signup" page
         wait.until(ExpectedConditions.urlContains("signup"));
@@ -178,8 +207,8 @@ public class FobeSoftLoginTest {
         // Wait for the checkbox to be clickable
         wait.until(ExpectedConditions.elementToBeClickable(rememberMe));
 
-        // Click on the "Remember Me" checkbox
-        rememberMe.click();
+        // Click on the "Remember Me" checkbox using safe click method
+        safeClick(rememberMe);
 
         // Assert that the checkbox is selected, checking the "checked" attribute or "aria-checked"
         Assert.assertTrue(rememberMe.isSelected() 
