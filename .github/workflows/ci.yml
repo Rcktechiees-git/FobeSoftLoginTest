@@ -1,46 +1,26 @@
-name: Java Tests
+name: Java CI
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
 
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+      - name: Build and Test
+        run: mvn test --batch-mode
 
-      - name: Show Chrome version
-        run: chrome --version
-
-      - name: Run tests (headless)
-        run: mvn -B -Dheadless=true test
-
-      # Debugging: Show if the test class exists
-      - name: List compiled test classes (debug)
-        if: always()
-        run: find target/test-classes -name "FobeSoftLoginTest.class" -print
-
-      # Upload raw Surefire reports as an artifact
-      - name: Archive Surefire reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: surefire-reports
-          path: target/surefire-reports
-
-      # Generate a pretty GitHub Actions test summary
       - name: Publish Test Report
         if: always()
         uses: mikepenz/action-junit-report@v4
@@ -48,3 +28,7 @@ jobs:
           report_paths: 'target/surefire-reports/TEST-*.xml'
           include_passed: true
           check_name: 'Java Test Results'
+          annotate_notice: true
+          require_tests: true
+          detailed_summary: true
+          include_suite_name: true
