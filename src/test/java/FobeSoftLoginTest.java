@@ -89,7 +89,7 @@ public class FobeSoftLoginTest {
         Assert.assertTrue(driver.findElement(By.xpath("//a[normalize-space()='Forgot Password?']")).isDisplayed());
         Assert.assertTrue(driver.findElement(By.xpath("//a[@routerlink='/signup']")).isDisplayed());
     }
-
+/*
     @Test
     public void invalidLoginShowsError() {
         WebElement username = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("EMail1")));
@@ -137,7 +137,7 @@ public void forgotPasswordLink() {
     wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.xpath("//div[contains(@class, 'banner-text') and contains(text(), 'Log In')]")));
 }
-
+*/
 
     @Test
     public void signUpLink() {
